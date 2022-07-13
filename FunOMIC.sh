@@ -26,7 +26,7 @@ Help()
 ########### SET VARIABLES ############
 ######################################
 
-while getopts "1:2:p:o:d:t:h" flag
+while getopts "1:2:p:o:d1:d2:d3:t:h" flag
 do
     case "$flag" in
         1) read1=$OPTARG;; # path of paired end read1 (we recommend to apply kneaddata or other quality control first)
