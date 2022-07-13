@@ -8,7 +8,7 @@ Help()
    echo
    echo "FunOMIC: mycobiome taxonomic and functional profiling pipeline"
    echo
-   echo "Syntax: FunOMIC -1 -2 -p -o -d -t"
+   echo "Syntax: FunOMIC -1 -2 -p -o -d1 -d2 -d3 -t"
    echo "options:"
    echo "1     path of paired end read1 (we recommend to apply kneaddata or other quality control first)"
    echo "2     path of paired end read2 (we recommend to apply kneaddata or other quality control first)"
@@ -74,8 +74,8 @@ samtools view -b -f 4 $outdir/tmp/${prefix}_Bact.sam > $outdir/tmp/${prefix}_noB
 
 samtools sort -n $outdir/tmp/${prefix}_noBact.bam -o $outdir/tmp/${prefix}_noBact_sorted.bam &>/dev/null
 samtools fastq -@ 8 $outdir/tmp/${prefix}_noBact_sorted.bam \
-   -1 $outdir/${prefix}_noBact_1.fastq.gz \
-   -2 $outdir/${prefix}_noBact_2.fastq.gz \
+   -1 $outdir/tmp/${prefix}_noBact_1.fastq.gz \
+   -2 $outdir/tmp/${prefix}_noBact_2.fastq.gz \
    -0 /dev/null -s /dev/null -n 2> $outdir/bact_decontam.log
 
 
@@ -87,8 +87,8 @@ samtools fastq -@ 8 $outdir/tmp/${prefix}_noBact_sorted.bam \
 printf "Start taxonomic annotation for ${prefix}\n"
 
 bowtie2 -p $threads -x $taxadb/FunOMIC.T.v1 \
--1 $outdir/${prefix}_noBact_1.fastq.gz \
--2 $outdir/${prefix}_noBact_2.fastq.gz \
+-1 $outdir/tmmp/${prefix}_noBact_1.fastq.gz \
+-2 $outdir/tmp/${prefix}_noBact_2.fastq.gz \
 -S $outdir/tmp/${prefix}.sam 2> $outdir/taxonomic_profiling/log
 
 # filter hits with q-score over 30 and coverage over 80
