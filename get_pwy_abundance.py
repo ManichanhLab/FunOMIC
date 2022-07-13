@@ -11,6 +11,18 @@ parser.add_argument('-i', '--input',
 						default = None,
 						help = "Input blastx output path.\n",
 						required = True)
+parser.add_argument('-c', '--id',
+						dest = "id_catalog",
+						action = "store",
+						default = None,
+						help = "id_catalog file path.\n",
+						required = True)
+parser.add_argument('-a', '--annotation',
+						dest = "ann_path",
+						action = "store",
+						default = None,
+						help = "annotation file path.\n",
+						required = True)
 
 
 parser.add_argument('-o1', '--output1',
@@ -41,13 +53,15 @@ parser.add_argument('-o4', '--output4',
 option=parser.parse_args()
 
 sample_to_process = option.input_path
+id_path = option.id_catalog
+ann_path = option.ann_path
 output1=option.output_path1
 output2=option.output_path2
 output3=option.output_path3
 output4=option.output_path4
 
-id_catalog=pd.read_csv("/mnt/synology/RAW_DATA/FUNGAL_GENOMES/id_to_clean.txt",delimiter="\t",names=["pid","rid"])
-jgi_ann=pd.read_csv("/mnt/synology/RAW_DATA/FUNGAL_GENOMES/JGI_CDS/version_Nov2021/annotation_all.tab",delimiter='\t',names=["proteinId","ecNum","definition","catalyticActivity","cofactors","associatedDiseases","pathway","pathway_class","pathway_type"])
+id_catalog=pd.read_csv(id_path,delimiter="\t",names=["pid","rid"])
+jgi_ann=pd.read_csv(ann_path,delimiter='\t',names=["proteinId","ecNum","definition","catalyticActivity","cofactors","associatedDiseases","pathway","pathway_class","pathway_type"])
 blastx_out=pd.read_csv(sample_to_process,delimiter='\t',names=["qid","rid","id","lenght","mismatch","gapopne","qstart","qend","sstart","send","evalue","bscore"])
 if len(blastx_out) >=1:
 	raw_counts=blastx_out['rid'].value_counts()

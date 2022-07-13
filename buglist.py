@@ -18,16 +18,23 @@ parser.add_argument('-o', '--output',
 			default = None,
 			help = "Sample to output in this script \n")
 
+parser.add_argument('-t', '--taxa',
+			dest = "taxanomy_path",
+			action = "store",
+			default = None,
+			help = "Path of the taxanomy file \n")
+
 option = parser.parse_args()
 
 sample_to_process = option.input_path
 output_path = option.output_path
+taxa_path = option.taxanomy_path
 
 bt_counts=pd.read_csv(sample_to_process, delimiter=" ",names=["Id","Abundance"])
 if len(bt_counts) >= 1:
 	raw_counts=bt_counts.groupby(bt_counts.columns[0])[bt_counts.columns[-1]].median().reset_index()
 	# taxa=pd.read_csv('/mnt/storage5TB/zixuan/all_busco_taxa-humannFormat.txt', delimiter="\t",names=["Id","taxa"]) ## taxa of version1
-	taxa=pd.read_csv('/home/zixuan/00-BACKUP/GENOMIC/version2/FunOMICTv2-taxonomy.txt', delimiter="\t",names=["Id","taxa"],index_col=False)
+	taxa=pd.read_csv(taxa_path, delimiter="\t",names=["Id","taxa"],index_col=False)
 	raw_counts.columns=["Id","Abundance"]
 	taxa.columns=["Id","taxa"]
 	buglist=pd.merge(taxa,raw_counts)

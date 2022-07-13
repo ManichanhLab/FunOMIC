@@ -87,7 +87,7 @@ samtools fastq -@ 8 $outdir/tmp/${prefix}_noBact_sorted.bam \
 printf "Start taxonomic annotation for ${prefix}\n"
 
 bowtie2 -p $threads -x $taxadb/FunOMIC.T.v1 \
--1 $outdir/tmmp/${prefix}_noBact_1.fastq.gz \
+-1 $outdir/tmp/${prefix}_noBact_1.fastq.gz \
 -2 $outdir/tmp/${prefix}_noBact_2.fastq.gz \
 -S $outdir/tmp/${prefix}.sam 2> $outdir/taxonomic_profiling/log
 
@@ -103,7 +103,7 @@ samtools idxstats --threads $threads $outdir/tmp/${prefix}.30.c80.bam > $outdir/
 
 
 awk '$3 > 0' $outdir/tmp/${prefix}.idxstats.txt | sed 's/|/\t/g' | awk '{print $1,$4}' > $outdir/tmp/${prefix}"_assembly_hits.txt"
-buglist.py -i $outdir/tmp/${prefix}"_assembly_hits.txt" -o $outdir"/taxonomic_profiling"/${prefix}"_buglist_stratified.txt" &>/dev/null
+buglist.py -i $outdir/tmp/${prefix}"_assembly_hits.txt" -t $taxadb/taxonomy.txt -o $outdir"/taxonomic_profiling"/${prefix}"_buglist_stratified.txt" &>/dev/null
   
 
 #### rm temporary files
@@ -142,10 +142,12 @@ awk '$4 >= 20' $outdir/"functional_profiling"/${prefix}.func.out | sort -k3,3nr 
     fi &>/dev/null
 
 functional_profiling.py -i $outdir/"functional_profiling"/${prefix}.func.filtered.out\
+ -c $protdb/id_to_clean.txt -a $protdb/nju_id_protein_ec.txt \
  -o1 $outdir/"functional_profiling"/${prefix}"_protein.csv"\
  -o2 $outdir/"functional_profiling"/${prefix}"_EC.csv" &>/dev/null
 
 get_pwy_abundance.py -i $outdir/"functional_profiling"/${prefix}.func.filtered.out\
+ -c $protdb/id_to_clean.txt -a $protdb/nju_id_protein_ec.txt \
  -o1 $outdir/"functional_profiling"/${prefix}"_pwy_abundance.csv"\
  -o2 $outdir/"functional_profiling"/${prefix}"_pwyClass_abundance.csv"\
  -o3 $outdir/"functional_profiling"/${prefix}"_pwyType_abundance.csv"\
