@@ -15,7 +15,7 @@ git clone https://github.com/ManichanhLab/FunOMIC.git
 ```
 PATH=$PATH:/home/ManichanhLab/Downloads/FunOMIC
 ```
-You can also add this command line to your ~/.bashrc file
+You can also add this command line to your ~/.profile file
 
 3, To use FunOMIC pipeline, make sure you have downloaded the required database from https://manichanh.vhir.org/funomic/.
 ```
