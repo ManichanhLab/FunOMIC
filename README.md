@@ -13,7 +13,7 @@ git clone https://github.com/ManichanhLab/FunOMIC.git
 ```
 2, Add the path of FunOMIC folder in your PATH variable, for example:
 ```
-PATH=$PATH:/home/ManichanhLab/Downloads/FunOMIC
+export PATH=$PATH:/home/ManichanhLab/Downloads/FunOMIC
 ```
 You can also add this command line to your ~/.profile file
 
