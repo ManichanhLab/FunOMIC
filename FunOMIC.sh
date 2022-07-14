@@ -8,34 +8,35 @@ Help()
    echo
    echo "FunOMIC: mycobiome taxonomic and functional profiling pipeline"
    echo
-   echo "Syntax: FunOMIC -1 -2 -p -o -d1 -d2 -d3 -t"
+   echo "Syntax: FunOMIC -1 -2 -p -o -a -b -c -t"
    echo "options:"
    echo "1     path of paired end read1 (we recommend to apply kneaddata or other quality control first)"
    echo "2     path of paired end read2 (we recommend to apply kneaddata or other quality control first)"
    echo "p     output prefix"
    echo "o     path of output directory"
-   echo "d1     path of UHGG bacterial database directory"
-   echo "d2     path of FunOMIC-T databases directory"
-   echo "d3     path of FunOMIC-P databases directory"
+   echo "a     path of UHGG bacterial database directory"
+   echo "b     path of FunOMIC-T databases directory"
+   echo "c     path of FunOMIC-P databases directory"
    echo "t     number of threads"
    echo
 }
+
 
 
 ######################################
 ########### SET VARIABLES ############
 ######################################
 
-while getopts "1:2:p:o:d1:d2:d3:t:h" flag
+while getopts "1:2:p:o:a:b:c:t:h" flag
 do
     case "$flag" in
         1) read1=$OPTARG;; # path of paired end read1 (we recommend to apply kneaddata or other quality control first)
         2) read2=$OPTARG;; # path of paired end read2 (we recommend to apply kneaddata or other quality control first)
         p) prefix=$OPTARG;; #output prefix
         o) outdir=$OPTARG;; #path of output directory
-        d1) bactdb=$OPTARG;; #path of UHGG bacterial database
-        d2) taxadb=$OPTARG;; #path of FunOMIC-T databases
-        d3) protdb=$OPTARG;; #path of FunOMIC-P databases
+        a) bactdb=$OPTARG;; #path of UHGG bacterial database
+        b) taxadb=$OPTARG;; #path of FunOMIC-T databases
+        c) protdb=$OPTARG;; #path of FunOMIC-P databases
         t) threads=$OPTARG;; #number of threads
         h) Help
            exit;; #display help
