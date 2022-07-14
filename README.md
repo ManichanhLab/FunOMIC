@@ -20,6 +20,6 @@ You can also add this command line to your ~/.profile file
 3, To use FunOMIC pipeline, make sure you have downloaded the required database from https://manichanh.vhir.org/funomic/.
 ```
 FunOMIC -1 read1.fastq -2 read2.fastq -p output_prefix -o output_folder \
--d1 bacterialDB_path -d2 FunOMIC-T_folder -d3 FunOMIC-P_folder -t #_threads
+-a bacterialDB_path -b FunOMIC-T_folder -c FunOMIC-P_folder -t #_threads
 ```
 
