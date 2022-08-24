@@ -69,15 +69,15 @@ fi &>/dev/null
 bowtie2 -p $threads -x $bactdb/uhgg \
 -1 $read1 \
 -2 $read2 \
--S $outdir/tmp/${prefix}_Bact.sam &>/dev/null
+-S $outdir/tmp/${prefix}_Bact.sam 2> ${outdir}/bact_decontam.log
 
 samtools view -b -f 4 $outdir/tmp/${prefix}_Bact.sam > $outdir/tmp/${prefix}_noBact.bam 
 
 samtools sort -n $outdir/tmp/${prefix}_noBact.bam -o $outdir/tmp/${prefix}_noBact_sorted.bam &>/dev/null
 samtools fastq -@ 8 $outdir/tmp/${prefix}_noBact_sorted.bam \
-   -1 $outdir/tmp/${prefix}_noBact_1.fastq.gz \
-   -2 $outdir/tmp/${prefix}_noBact_2.fastq.gz \
-   -0 /dev/null -s /dev/null -n 2> $outdir/bact_decontam.log
+   -1 $outdir/${prefix}_noBact_1.fastq.gz \
+   -2 $outdir/${prefix}_noBact_2.fastq.gz \
+   -0 /dev/null -s /dev/null -n &>/dev/null
 
 
 
@@ -88,8 +88,8 @@ samtools fastq -@ 8 $outdir/tmp/${prefix}_noBact_sorted.bam \
 printf "Start taxonomic annotation for ${prefix}\n"
 
 bowtie2 -p $threads -x $taxadb/FunOMIC.T.v1 \
--1 $outdir/tmp/${prefix}_noBact_1.fastq.gz \
--2 $outdir/tmp/${prefix}_noBact_2.fastq.gz \
+-1 $outdir/${prefix}_noBact_1.fastq.gz \
+-2 $outdir/${prefix}_noBact_2.fastq.gz \
 -S $outdir/tmp/${prefix}.sam 2> $outdir/taxonomic_profiling/log
 
 # filter hits with q-score over 30 and coverage over 80
@@ -110,17 +110,18 @@ buglist.py -i $outdir/tmp/${prefix}"_assembly_hits.txt" -t $taxadb/taxonomy.txt 
 #### rm temporary files
 rm -r $outdir/tmp/
 
-# # ##############################################
-# # ########### FUNCTIONAL PROFILING! ############
-# # ##############################################
+##############################################
+########### FUNCTIONAL PROFILING! ############
+##############################################
 
 
 printf "Starting functional annotation for ${prefix}\n"
 
 cd ${outdir}/functional_profiling
+mkdir $outdir/functional_profiling/tmp/
 
-flash2 $outdir/${prefix}_noBact_1.fastq.gz $outdir/${prefix}_noBact_.fastq.gz -o ${prefix} -q -t $threads  &>/dev/null
-cat $outdir/functional_profiling/${prefix}.extendedFrags.fastq $outdir/functional_profiling/${prefix}.notCombined_1.fastq $outdir/functional_profiling/${prefix}.notCombined_2.fastq > $outdir/functional_profiling/joined.fastq
+flash2 $outdir/${prefix}_noBact_1.fastq.gz $outdir/${prefix}_noBact_2.fastq.gz -o tmp/${prefix} -q -t $threads &>/dev/null
+cat $outdir/functional_profiling/tmp/${prefix}.extendedFrags.fastq $outdir/functional_profiling/tmp/${prefix}.notCombined_1.fastq $outdir/functional_profiling/tmp/${prefix}.notCombined_2.fastq > $outdir/functional_profiling/joined.fastq
 
 
 printf "merged clean reads stored in: $outdir/functional_profiling/joined.fastq \n"
@@ -136,9 +137,9 @@ awk '$4 >= 20' $outdir/"functional_profiling"/${prefix}.func.out | sort -k3,3nr 
     if [[ -f $outdir/"functional_profiling"/${prefix}.func.filtered.out ]]
     then   # When the pipeline has been executed properly and the script recognizes the output
          printf "removing secondary files files for ${p}\n\n"
-         #rm $outdir/${p}/${p}.30.sorted.bam
          rm $outdir/"functional_profiling"/${prefix}.func.out
-         rm $outdir/functional_profiling/joined.fastq
+         rm $outdir/functional_profiling/*.fastq
+         rm -r $outdir/functional_profiling/${prefix}.hist*
     else echo "No output generated"
     fi &>/dev/null
 
@@ -148,7 +149,7 @@ functional_profiling.py -i $outdir/"functional_profiling"/${prefix}.func.filtere
  -o2 $outdir/"functional_profiling"/${prefix}"_EC.csv" &>/dev/null
 
 get_pwy_abundance.py -i $outdir/"functional_profiling"/${prefix}.func.filtered.out\
- -c $protdb/id_to_clean.txt -a $protdb/nju_id_protein_ec.txt \
+ -c $protdb/id_to_clean.txt -a $protdb/jgi_annotation_Nov2021.tab \
  -o1 $outdir/"functional_profiling"/${prefix}"_pwy_abundance.csv"\
  -o2 $outdir/"functional_profiling"/${prefix}"_pwyClass_abundance.csv"\
  -o3 $outdir/"functional_profiling"/${prefix}"_pwyType_abundance.csv"\
