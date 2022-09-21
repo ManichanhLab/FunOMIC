@@ -10,6 +10,7 @@ fungal databases, we foresee a fast-growing resource for mycobiome studies.
 1, Required third-party tools:
 
 A full installation of FunOMIC requires Python 3.3+ (modules needed: pandas, math, subprocess, argparse), bowtie2, samtools, flash2, and diamond. 
+
 Please make sure you successfully installed the dependancies.
 
 [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
