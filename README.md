@@ -7,6 +7,13 @@ databases for the identification of fungi. Applied to more than 2,600 human meta
 body sites, and diseases. Correlation network analysis provided new insights into inter-kingdom interactions. With this pipeline and two of the most comprehensive 
 fungal databases, we foresee a fast-growing resource for mycobiome studies.
 ## Usage
+1, Required third-party tools
+A full installation of FunOMIC requires Python 3.3+ (modules needed: pandas, math, subprocess, argparse),bowtie2, samtools, flash2, diamond. Please make sure you successfully installed the dependancies.
+[bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
+[samtools](http://www.htslib.org/)
+[flash2](https://github.com/dstreett/FLASH2)
+[diamond](https://github.com/bbuchfink/diamond/wiki)
+
 1, Download FunOMIC pipeline:
 ```
 git clone https://github.com/ManichanhLab/FunOMIC.git
