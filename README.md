@@ -18,17 +18,17 @@ A full installation of FunOMIC requires Python 3.3+ (modules needed: pandas, mat
 
 [diamond](https://github.com/bbuchfink/diamond/wiki)
 
-1, Download FunOMIC pipeline:
+2, Download FunOMIC pipeline:
 ```
 git clone https://github.com/ManichanhLab/FunOMIC.git
 ```
-2, Add the path of FunOMIC folder in your PATH variable, for example:
+3, Add the path of FunOMIC folder in your PATH variable, for example:
 ```
 export PATH=$PATH:/home/ManichanhLab/Downloads/FunOMIC
 ```
 You can also add this command line to your ~/.profile file
 
-3, To use FunOMIC pipeline, make sure you have downloaded the required database from https://manichanh.vhir.org/funomic/.
+4, To use FunOMIC pipeline, make sure you have downloaded the required database from https://manichanh.vhir.org/funomic/.
 ```
 FunOMIC -1 read1.fastq -2 read2.fastq -p output_prefix -o output_folder \
 -a bacterialDB_path -b FunOMIC-T_folder -c FunOMIC-P_folder -t #_threads
