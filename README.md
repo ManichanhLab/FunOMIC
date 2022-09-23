@@ -9,7 +9,7 @@ fungal databases, we foresee a fast-growing resource for mycobiome studies.
 ## Usage
 1, Required third-party tools:
 
-A full installation of FunOMIC requires Python 3.3+ (modules needed: pandas, math, subprocess, argparse), bowtie2, samtools, flash2, and diamond. 
+A full installation of FunOMIC requires Python 3.3+ (modules needed: pandas, math, subprocess, argparse), R 4.0+ (packages needed: KEGGREST, RCurl), bowtie2, samtools, flash2, and diamond. 
 
 Please make sure you successfully installed the dependancies.
 
@@ -20,6 +20,9 @@ Please make sure you successfully installed the dependancies.
 [flash2](https://github.com/dstreett/FLASH2)
 
 [diamond](https://github.com/bbuchfink/diamond/wiki)
+
+[KEGGREST](https://www.bioconductor.org/packages/release/bioc/html/KEGGREST.html)
+
 
 2, Download FunOMIC pipeline:
 ```

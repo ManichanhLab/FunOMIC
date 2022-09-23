@@ -81,9 +81,9 @@ samtools fastq -@ 8 $outdir/tmp/${prefix}_noBact_sorted.bam \
 
 
 
-# # ##############################################
-# # ########### TAXONOMICAL PROFILING! ###########
-# # ##############################################
+# ##############################################
+# ########### TAXONOMICAL PROFILING! ###########
+# ##############################################
 
 printf "Start taxonomic annotation for ${prefix}\n"
 
@@ -137,9 +137,10 @@ awk '$4 >= 20' $outdir/"functional_profiling"/${prefix}.func.out | sort -k3,3nr 
     if [[ -f $outdir/"functional_profiling"/${prefix}.func.filtered.out ]]
     then   # When the pipeline has been executed properly and the script recognizes the output
          printf "removing secondary files files for ${p}\n\n"
-         rm $outdir/"functional_profiling"/${prefix}.func.out
+         rm $outdir/functional_profiling/${prefix}.func.out
          rm $outdir/functional_profiling/*.fastq
-         rm -r $outdir/functional_profiling/${prefix}.hist*
+         rm $outdir/functional_profiling/${prefix}.hist*
+         rm -r $outdir/functional_profiling/tmp
     else echo "No output generated"
     fi &>/dev/null
 
@@ -148,9 +149,10 @@ functional_profiling.py -i $outdir/"functional_profiling"/${prefix}.func.filtere
  -o1 $outdir/"functional_profiling"/${prefix}"_protein.csv"\
  -o2 $outdir/"functional_profiling"/${prefix}"_EC.csv" &>/dev/null
 
-get_pwy_abundance.py -i $outdir/"functional_profiling"/${prefix}.func.filtered.out\
- -c $protdb/id_to_clean.txt -a $protdb/jgi_annotation_Nov2021.tab \
+
+ get_pwy_abundance_v1.py -i $outdir/"functional_profiling"/${prefix}.func.filtered.out\
+ -s $protdb \
  -o1 $outdir/"functional_profiling"/${prefix}"_pwy_abundance.csv"\
  -o2 $outdir/"functional_profiling"/${prefix}"_pwyClass_abundance.csv"\
  -o3 $outdir/"functional_profiling"/${prefix}"_pwyType_abundance.csv"\
- -o4 $outdir/"functional_profiling"/${prefix}"_annotation.csv" &>/dev/null
+ -o4 $outdir/"functional_profiling"/${prefix}"_full_annotation.csv" &>/dev/null
