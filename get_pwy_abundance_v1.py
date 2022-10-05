@@ -97,12 +97,14 @@ if len(blastx_out) >=1:
 						inter=[raw_counts_clean.iloc[i]['pid'],"NA","NA","NA","unidentified","unidentified","unidentified","unidentified",speciesID,"NA","NA","NA"]
 						inter=pd.DataFrame([inter],columns=column_names)
 					else: # invoke the keggConv script to get pwy info, return pwy, pwy class
-						command = ['Rscript', rscript_path, uptID]
+						command = ['Rscript', '/mnt/synology/ZIXUAN/scripts/keggConv.R', uptID]
 						result = run(command, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-						conv=result.stdout.split(' ')
-						inter=[raw_counts_clean.iloc[i]['pid'],"NA","NA",uptID,conv[0],conv[1],conv[2],"unidentified",speciesID,"NA","NA","NA"]
-						inter=pd.DataFrame([inter],columns=column_names)
-		inter=inter.assign(counts=raw_counts_clean.iloc[i]['counts']/len(inter))
+						conv=result.stdout.split('|')
+						inter=[]
+						for c in range(0, len(conv), 3):
+							rows=[raw_counts.iloc[i]['rid'],"NA","NA",uptID,conv[c].strip('\n'),conv[c+1].strip('\n'),conv[c+2].strip('\n'),"unidentified",speciesID,"NA","NA","NA"]
+							inter.append(rows)
+						inter=pd.DataFrame(inter,columns=column_names)
 		pwy_counts=pwy_counts.append(inter,ignore_index = True,sort=False)
 	
 	def get_stratified_taxa(ann_type):
