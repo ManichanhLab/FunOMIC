@@ -65,9 +65,9 @@ rscript_path = scriptdir+'/keggConv.R'
 
 id_catalog=pd.read_csv(id_path,delimiter="\t",names=["pid","rid"]) #### id to clean
 column_names=["proteinId","ecNum","definition","uniprotID","KO","pathway","pathway_class","pathway_type", "speciesID","catalyticActivity","cofactors","associatedDiseases"]
-jgi_ann=pd.read_csv(ann_path,delimiter='\t',names=column_names,index_col=False)
+jgi_ann=pd.read_csv(ann_path,delimiter='\t',names=column_names,index_col=False,dtype={'fourth_column': 'str'})
 blastx_out=pd.read_csv(sample_to_process,index_col=False,delimiter='\t',names=["qid","rid","id","lenght","mismatch","gapopne","qstart","qend","sstart","send","evalue","bscore"])
-rid_to_uniprot_species=pd.read_csv(uniprot_catalog,delimiter='\t',names=["rid","uniprotId","speciesID"],dtype={'first_column': 'str'},index_col=False)
+rid_to_uniprot_species=pd.read_csv(uniprot_catalog,delimiter='\t',names=["rid","uniprotId","speciesID"],dtype={'first_column': 'str', 'second_column': 'str'},index_col=False)
 taxa=pd.read_csv(taxa_path, delimiter="\t",names=["speciesID","taxa"],index_col=False)
 if len(blastx_out) >=1:
 	raw_counts=blastx_out['rid'].value_counts().rename_axis("rid").reset_index(name='counts')
@@ -105,6 +105,7 @@ if len(blastx_out) >=1:
 							rows=[raw_counts.iloc[i]['rid'],"NA","NA",uptID,conv[c].strip('\n'),conv[c+1].strip('\n'),conv[c+2].strip('\n'),"unidentified",speciesID,"NA","NA","NA"]
 							inter.append(rows)
 						inter=pd.DataFrame(inter,columns=column_names)
+		inter=inter.assign(counts=raw_counts.iloc[i]['counts']/len(inter))
 		pwy_counts=pwy_counts.append(inter,ignore_index = True,sort=False)
 	
 	def get_stratified_taxa(ann_type):
