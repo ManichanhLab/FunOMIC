@@ -97,7 +97,7 @@ if len(blastx_out) >=1:
 						inter=[raw_counts_clean.iloc[i]['pid'],"NA","NA","NA","unidentified","unidentified","unidentified","unidentified",speciesID,"NA","NA","NA"]
 						inter=pd.DataFrame([inter],columns=column_names)
 					else: # invoke the keggConv script to get pwy info, return pwy, pwy class
-						command = ['Rscript', '/mnt/synology/ZIXUAN/scripts/keggConv.R', uptID]
+						command = ['Rscript', rscript_path, uptID]
 						result = run(command, stdout=PIPE, stderr=PIPE, universal_newlines=True)
 						conv=result.stdout.split('|')
 						inter=[]
