@@ -102,7 +102,7 @@ if len(blastx_out) >=1:
 						conv=result.stdout.split('|')
 						inter=[]
 						for c in range(0, len(conv), 3):
-							rows=[raw_counts_clean.iloc[i]['rid'],"NA","NA",uptID,conv[c].strip('\n'),conv[c+1].strip('\n'),conv[c+2].strip('\n'),"unidentified",speciesID,"NA","NA","NA"]
+							rows=[raw_counts_clean.iloc[i]['pid'],"NA","NA",uptID,conv[c].strip('\n'),conv[c+1].strip('\n'),conv[c+2].strip('\n'),"unidentified",speciesID,"NA","NA","NA"]
 							inter.append(rows)
 						inter=pd.DataFrame(inter,columns=column_names)
 		inter=inter.assign(counts=raw_counts_clean.iloc[i]['counts']/len(inter))
