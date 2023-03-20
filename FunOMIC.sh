@@ -120,7 +120,7 @@ printf "Starting functional annotation for ${prefix}\n"
 cd ${outdir}/functional_profiling
 mkdir $outdir/functional_profiling/tmp/
 
-zcat $outdir/${prefix}_noBact* > > $outdir/functional_profiling/joined.fastq
+zcat $outdir/${prefix}_noBact* > $outdir/functional_profiling/joined.fastq
 
 printf "merged clean reads stored in: $outdir/functional_profiling/joined.fastq \n"
 
