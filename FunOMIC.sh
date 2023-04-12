@@ -66,86 +66,86 @@ if [[ ! -f  $outdir ]]
 fi &>/dev/null
 
 
-bowtie2 -p $threads -x $bactdb/uhgg \
--1 $read1 \
--2 $read2 \
--S $outdir/tmp/${prefix}_Bact.sam 2> ${outdir}/bact_decontam.log
+# bowtie2 -p $threads -x $bactdb/uhgg \
+# -1 $read1 \
+# -2 $read2 \
+# -S $outdir/tmp/${prefix}_Bact.sam 2> ${outdir}/bact_decontam.log
 
-samtools view -b -f 4 $outdir/tmp/${prefix}_Bact.sam > $outdir/tmp/${prefix}_noBact.bam 
+# samtools view -b -f 4 $outdir/tmp/${prefix}_Bact.sam > $outdir/tmp/${prefix}_noBact.bam 
 
-samtools sort -n $outdir/tmp/${prefix}_noBact.bam -o $outdir/tmp/${prefix}_noBact_sorted.bam &>/dev/null
-samtools fastq -@ 8 $outdir/tmp/${prefix}_noBact_sorted.bam \
-   -1 $outdir/${prefix}_noBact_1.fastq.gz \
-   -2 $outdir/${prefix}_noBact_2.fastq.gz \
-   -0 /dev/null -s /dev/null -n &>/dev/null
-
-
-
-# ##############################################
-# ########### TAXONOMICAL PROFILING! ###########
-# ##############################################
-
-printf "Start taxonomic annotation for ${prefix}\n"
-
-bowtie2 -p $threads -x $taxadb/FunOMIC.T.v1 \
--1 $outdir/${prefix}_noBact_1.fastq.gz \
--2 $outdir/${prefix}_noBact_2.fastq.gz \
--S $outdir/tmp/${prefix}.sam 2> $outdir/taxonomic_profiling/log
-
-# filter hits with q-score over 30 and coverage over 80
-samtools view -Sq 30 $outdir/tmp/${prefix}.sam > $outdir/tmp/${prefix}.30.sam 
-samtools view -bSq 30 $outdir/tmp/${prefix}.sam > $outdir/tmp/${prefix}.30.bam
-samtools sort -o $outdir/tmp/${prefix}.30.sorted.bam $outdir/tmp/${prefix}.30.bam  &>/dev/null
-coverageFilter.py -i $outdir/tmp/${prefix}.30.sam -o $outdir/tmp/${prefix}.30.c80.list &>/dev/null
-samtools view $outdir/tmp/${prefix}.30.sorted.bam | grep -f $outdir/tmp/${prefix}.30.c80.list > $outdir/tmp/${prefix}.30.c80.sam
-samtools view -bt $taxadb/FunOMIC.T.v1.fasta.fai -o $outdir/tmp/${prefix}.30.c80.bam $outdir/tmp/${prefix}.30.c80.sam &>/dev/null
-samtools index $outdir/tmp/${prefix}.30.c80.bam &>/dev/null
-samtools idxstats --threads $threads $outdir/tmp/${prefix}.30.c80.bam > $outdir/tmp/${prefix}.idxstats.txt
+# samtools sort -n $outdir/tmp/${prefix}_noBact.bam -o $outdir/tmp/${prefix}_noBact_sorted.bam &>/dev/null
+# samtools fastq -@ 8 $outdir/tmp/${prefix}_noBact_sorted.bam \
+#    -1 $outdir/${prefix}_noBact_1.fastq.gz \
+#    -2 $outdir/${prefix}_noBact_2.fastq.gz \
+#    -0 /dev/null -s /dev/null -n &>/dev/null
 
 
-awk '$3 > 0' $outdir/tmp/${prefix}.idxstats.txt | sed 's/|/\t/g' | awk '{print $1,$4}' > $outdir/tmp/${prefix}"_assembly_hits.txt"
-buglist.py -i $outdir/tmp/${prefix}"_assembly_hits.txt" -t $taxadb/taxonomy.txt -o $outdir"/taxonomic_profiling"/${prefix}"_buglist_stratified.txt" &>/dev/null
+
+# # ##############################################
+# # ########### TAXONOMICAL PROFILING! ###########
+# # ##############################################
+
+# printf "Start taxonomic annotation for ${prefix}\n"
+
+# bowtie2 -p $threads -x $taxadb/FunOMIC.T.v1 \
+# -1 $outdir/${prefix}_noBact_1.fastq.gz \
+# -2 $outdir/${prefix}_noBact_2.fastq.gz \
+# -S $outdir/tmp/${prefix}.sam 2> $outdir/taxonomic_profiling/log
+
+# # filter hits with q-score over 30 and coverage over 80
+# samtools view -Sq 30 $outdir/tmp/${prefix}.sam > $outdir/tmp/${prefix}.30.sam 
+# samtools view -bSq 30 $outdir/tmp/${prefix}.sam > $outdir/tmp/${prefix}.30.bam
+# samtools sort -o $outdir/tmp/${prefix}.30.sorted.bam $outdir/tmp/${prefix}.30.bam  &>/dev/null
+# coverageFilter.py -i $outdir/tmp/${prefix}.30.sam -o $outdir/tmp/${prefix}.30.c80.list &>/dev/null
+# samtools view $outdir/tmp/${prefix}.30.sorted.bam | grep -f $outdir/tmp/${prefix}.30.c80.list > $outdir/tmp/${prefix}.30.c80.sam
+# samtools view -bt $taxadb/FunOMIC.T.v1.fasta.fai -o $outdir/tmp/${prefix}.30.c80.bam $outdir/tmp/${prefix}.30.c80.sam &>/dev/null
+# samtools index $outdir/tmp/${prefix}.30.c80.bam &>/dev/null
+# samtools idxstats --threads $threads $outdir/tmp/${prefix}.30.c80.bam > $outdir/tmp/${prefix}.idxstats.txt
+
+
+# awk '$3 > 0' $outdir/tmp/${prefix}.idxstats.txt | sed 's/|/\t/g' | awk '{print $1,$4}' > $outdir/tmp/${prefix}"_assembly_hits.txt"
+# buglist.py -i $outdir/tmp/${prefix}"_assembly_hits.txt" -t $taxadb/taxonomy.txt -o $outdir"/taxonomic_profiling"/${prefix}"_buglist_stratified.txt" &>/dev/null
   
 
-#### rm temporary files
-rm -r $outdir/tmp/
+# #### rm temporary files
+# rm -r $outdir/tmp/
 
 ##############################################
 ########### FUNCTIONAL PROFILING! ############
 ##############################################
 
 
-printf "Starting functional annotation for ${prefix}\n"
+# printf "Starting functional annotation for ${prefix}\n"
 
-cd ${outdir}/functional_profiling
-mkdir $outdir/functional_profiling/tmp/
+# cd ${outdir}/functional_profiling
+# mkdir $outdir/functional_profiling/tmp/
 
-zcat $outdir/${prefix}_noBact* > $outdir/functional_profiling/joined.fastq
+# zcat $outdir/${prefix}_noBact* > $outdir/functional_profiling/joined.fastq
 
-printf "merged clean reads stored in: $outdir/functional_profiling/joined.fastq \n"
+# printf "merged clean reads stored in: $outdir/functional_profiling/joined.fastq \n"
 
-  diamond blastx -b5 -c1 --query-cover 95 \
-  --id 99 -d $protdb"/FunOMIC.P.v1.dmnd" \
-  -q $outdir"/functional_profiling"/joined.fastq --outfmt 6 \
-  -o $outdir/"functional_profiling"/${prefix}.func.out 2> $outdir/functional_profiling/log
+#   diamond blastx -b5 -c1 --query-cover 95 \
+#   --id 99 -d $protdb"/FunOMIC.P.v1.dmnd" \
+#   -q $outdir"/functional_profiling"/joined.fastq --outfmt 6 \
+#   -o $outdir/"functional_profiling"/${prefix}.func.out 2> $outdir/functional_profiling/log
 
-# Filter alignment hits: coverage>80%; query length>100bp; sort by perc_identity, length, bit score, remove redundancy
-awk '$4 >= 20' $outdir/"functional_profiling"/${prefix}.func.out | sort -k3,3nr -k4,4nr -k12,12nr | awk '!a[$1]++' > $outdir/"functional_profiling"/${prefix}.func.filtered.out
+# # Filter alignment hits: coverage>80%; query length>100bp; sort by perc_identity, length, bit score, remove redundancy
+# awk '$4 >= 20' $outdir/"functional_profiling"/${prefix}.func.out | sort -k3,3nr -k4,4nr -k12,12nr | awk '!a[$1]++' > $outdir/"functional_profiling"/${prefix}.func.filtered.out
 
-    if [[ -f $outdir/"functional_profiling"/${prefix}.func.filtered.out ]]
-    then   # When the pipeline has been executed properly and the script recognizes the output
-         printf "removing secondary files files for ${p}\n\n"
-         rm $outdir/functional_profiling/${prefix}.func.out
-         rm $outdir/functional_profiling/*.fastq
-         rm $outdir/functional_profiling/${prefix}.hist*
-         rm -r $outdir/functional_profiling/tmp
-    else echo "No output generated"
-    fi &>/dev/null
+#     if [[ -f $outdir/"functional_profiling"/${prefix}.func.filtered.out ]]
+#     then   # When the pipeline has been executed properly and the script recognizes the output
+#          printf "removing secondary files files for ${p}\n\n"
+#          rm $outdir/functional_profiling/${prefix}.func.out
+#          rm $outdir/functional_profiling/*.fastq
+#          rm $outdir/functional_profiling/${prefix}.hist*
+#          rm -r $outdir/functional_profiling/tmp
+#     else echo "No output generated"
+#     fi &>/dev/null
 
-functional_profiling.py -i $outdir/"functional_profiling"/${prefix}.func.filtered.out\
- -c $protdb/id_to_clean.txt -a $protdb/nju_id_protein_ec.txt \
- -o1 $outdir/"functional_profiling"/${prefix}"_protein.csv"\
- -o2 $outdir/"functional_profiling"/${prefix}"_EC.csv" &>/dev/null
+# functional_profiling.py -i $outdir/"functional_profiling"/${prefix}.func.filtered.out\
+#  -c $protdb/id_to_clean.txt -a $protdb/nju_id_protein_ec.txt \
+#  -o1 $outdir/"functional_profiling"/${prefix}"_protein.csv"\
+#  -o2 $outdir/"functional_profiling"/${prefix}"_EC.csv" &>/dev/null
 
 
  get_pwy_abundance_v1.py -i $outdir/"functional_profiling"/${prefix}.func.filtered.out\
@@ -153,4 +153,4 @@ functional_profiling.py -i $outdir/"functional_profiling"/${prefix}.func.filtere
  -o1 $outdir/"functional_profiling"/${prefix}"_pwy_abundance.csv"\
  -o2 $outdir/"functional_profiling"/${prefix}"_pwyClass_abundance.csv"\
  -o3 $outdir/"functional_profiling"/${prefix}"_pwyType_abundance.csv"\
- -o4 $outdir/"functional_profiling"/${prefix}"_full_annotation.csv" &>/dev/null
+ -o4 $outdir/"functional_profiling"/${prefix}"_full_annotation.csv" #&>/dev/null
